@@ -1,4 +1,8 @@
 # sendspin-rs
+=======
+
+> [!WARNING]  
+> THIS IS A WIP. Please help!
 
 Hyper-efficient Rust implementation of the [Sendspin Protocol](https://github.com/Sendspin/spec) for synchronized multi-room audio streaming.
 
