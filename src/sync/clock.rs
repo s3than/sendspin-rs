@@ -54,7 +54,7 @@ impl ClockSync {
         // Discard samples with high RTT (network congestion)
         if rtt > 100_000 {
             // 100ms
-            eprintln!("Discarding sync sample: high RTT {}µs", rtt);
+            log::warn!("Discarding sync sample: high RTT {}µs", rtt);
             return;
         }
 
@@ -70,7 +70,7 @@ impl ClockSync {
             self.server_loop_start_unix = Some(now_unix - t2);
             self.synced = true;
 
-            eprintln!(
+            log::info!(
                 "Clock sync established: t1={}, t2={}, t3={}, t4={}, rtt={}µs, now_unix={}, serverLoopStart={}",
                 t1, t2, t3, t4, rtt, now_unix,
                 self.server_loop_start_unix.unwrap()
