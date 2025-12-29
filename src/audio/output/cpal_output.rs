@@ -27,7 +27,7 @@ impl CpalOutput {
 
         // Log device's default supported config to catch format mismatches
         if let Ok(def) = device.default_output_config() {
-            eprintln!(
+            log::info!(
                 "Device default: {:?} {}Hz {}ch",
                 def.sample_format(),
                 def.sample_rate().0,
@@ -36,7 +36,7 @@ impl CpalOutput {
             if def.sample_rate().0 != format.sample_rate
                 || def.channels() != format.channels as u16
             {
-                eprintln!(
+                log::warn!(
                     "WARN: requested {}Hz/{}ch; device default is {}Hz/{}ch (OS may resample)",
                     format.sample_rate, format.channels, def.sample_rate().0, def.channels()
                 );
@@ -108,7 +108,7 @@ impl CpalOutput {
                         }
                     }
                 },
-                |err| eprintln!("Audio stream error: {}", err),
+                |err| log::error!("Audio stream error: {}", err),
                 None,
             )
             .map_err(|e| Error::Output(e.to_string()))?;

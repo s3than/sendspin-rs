@@ -118,7 +118,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             // Send time sync message
             if let Err(e) = ws_tx.send_message(time_msg).await {
-                eprintln!("Failed to send time sync: {}", e);
+                log::error!("Failed to send time sync: {}", e);
                 break;
             }
         }
@@ -142,7 +142,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             output = Some(out);
                         }
                         Err(e) => {
-                            eprintln!("Failed to create audio output: {}", e);
+                            log::error!("Failed to create audio output: {}", e);
                             break;
                         }
                     }
@@ -150,7 +150,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                 if let Some(ref mut out) = output {
                     if let Err(e) = out.write(&buffer.samples) {
-                        eprintln!("Output error: {}", e);
+                        log::error!("Output error: {}", e);
                     }
                 }
             }
@@ -195,13 +195,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                             // Validate codec before proceeding
                             if player_config.codec != "pcm" {
-                                eprintln!("ERROR: Unsupported codec '{}' - only 'pcm' is supported!", player_config.codec);
-                                eprintln!("Server is sending compressed audio that we can't decode!");
+                                log::error!("ERROR: Unsupported codec '{}' - only 'pcm' is supported!", player_config.codec);
+                                log::error!("Server is sending compressed audio that we can't decode!");
                                 continue;
                             }
 
                             if player_config.bit_depth != 16 && player_config.bit_depth != 24 {
-                                eprintln!("ERROR: Unsupported bit depth {} - only 16 or 24-bit PCM supported!", player_config.bit_depth);
+                                log::error!("ERROR: Unsupported bit depth {} - only 16 or 24-bit PCM supported!", player_config.bit_depth);
                                 continue;
                             }
 
@@ -276,14 +276,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         16 => 2,
                         24 => 3,
                         _ => {
-                            eprintln!("Unsupported bit depth: {}", fmt.bit_depth);
+                            log::warn!("Unsupported bit depth: {}", fmt.bit_depth);
                             continue;
                         }
                     } as usize;
                     let frame_size = bytes_per_sample * fmt.channels as usize;
 
                     if chunk.data.len() % frame_size != 0 {
-                        eprintln!(
+                        log::error!(
                             "BAD FRAME: {} bytes not multiple of frame size {} ({}-bit, {}ch)",
                             chunk.data.len(), frame_size, fmt.bit_depth, fmt.channels
                         );
@@ -374,7 +374,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             scheduler.schedule(buffer);
                         }
                         Err(e) => {
-                            eprintln!("Decode error: {}", e);
+                            log::error!("Decode error: {}", e);
                         }
                     }
                 }
